@@ -1,0 +1,157 @@
+# Set mod variable to super key
+set $mod Mod4
+
+# Turn borders off
+for_window [class="^.*"] border pixel 0
+
+# Change gap size
+gaps outer 4
+gaps inner 20
+gaps top 62
+
+# Drag floating windows
+floating_modifier $mod
+
+# Start a URxvt terminal emulator instance
+bindsym $mod+t exec termite
+
+# Start a Thunar file manager
+bindsym $mod+e exec thunar
+
+# Kill focused window
+bindsym $mod+c kill
+
+# Start rofi drun menu
+bindsym $mod+r exec ~/.scripts/rofi/launch.sh drun 
+
+# Bind key to betterlockscreen (-git)
+bindsym --release $mod+l exec betterlockscreen -l blur
+
+# Set up screenshots and partial screenshots
+bindsym --release Print exec "~/.scripts/shot-now"
+bindsym --release Shift+Print exec maim -s ~/Pictures/Screenshots/`date +%Y-%m-%d_%H:%M:%S`.png
+
+# Bind audio keys to pactl volume control
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume 0 +5%
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume 0 -5%
+bindsym XF86AudioMute exec pactl set-sink-mute 0 toggle
+
+# Bind MPD controller
+bindsym XF86AudioPlay exec "~/.scripts/music-controller toggle"
+bindsym XF86AudioStop exec "~/.scripts/music-controller stop"
+bindsym XF86AudioNext exec "~/.scripts/music-controller next"
+bindsym XF86AudioPrev exec "~/.scripts/music-controller prev"
+
+# Bind brightness keys to light interface
+bindsym XF86MonBrightnessUp exec sudo light -A 5
+bindsym XF86MonBrightnessDown exec sudo light -U 5
+
+# Move focus with the arrow keys
+bindsym $mod+a focus left
+bindsym $mod+s focus down
+bindsym $mod+w focus up
+bindsym $mod+d focus right
+
+# Move windows with shift + arrow keys
+bindsym $mod+Shift+A move left
+bindsym $mod+Shift+S move down
+bindsym $mod+Shift+W move up
+bindsym $mod+Shift+D move right
+
+# Split in specified direction
+bindsym $mod+h split h
+bindsym $mod+v split v
+
+# Enter fullscreen mode for the focused container
+bindsym $mod+x fullscreen
+
+# Change container layout
+bindsym $mod+F1 layout stacking
+bindsym $mod+F2 layout tabbed
+bindsym $mod+F3 layout toggle split
+
+# Toggle tiling / floating
+bindsym $mod+Escape floating toggle
+
+# Change focus between tiling / floating windows
+bindsym $mod+Control+space focus mode_toggle
+
+# Bind keys to switch to next workspace
+bindsym $mod+bracketright workspace next
+bindsym $mod+bracketleft workspace prev
+
+# Switch to workspace
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
+bindsym $mod+6 workspace 6
+bindsym $mod+7 workspace 7
+bindsym $mod+8 workspace 8
+bindsym $mod+9 workspace 9
+bindsym $mod+0 workspace 10
+
+# Move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace 1
+bindsym $mod+Shift+2 move container to workspace 2
+bindsym $mod+Shift+3 move container to workspace 3
+bindsym $mod+Shift+4 move container to workspace 4
+bindsym $mod+Shift+5 move container to workspace 5
+bindsym $mod+Shift+6 move container to workspace 6
+bindsym $mod+Shift+7 move container to workspace 7
+bindsym $mod+Shift+8 move container to workspace 8
+bindsym $mod+Shift+9 move container to workspace 9
+bindsym $mod+Shift+0 move container to workspace 10
+
+# Reload the configuration file
+bindsym $mod+Shift+c reload
+
+# Restart i3 inplace
+bindsym $mod+Shift+r restart
+
+# Exit i3
+bindsym $mod+Shift+e exec ~/.scripts/rofi/launch.sh powermenu
+
+# Add resize keybindings in place of mode
+bindsym $mod+Control+D resize shrink width 10 px or 10
+bindsym $mod+Control+W resize grow height 10 px or 10
+bindsym $mod+Control+S resize shrink height 10 px or 10
+bindsym $mod+Control+A resize grow width 10 px or 10
+bindsym $mod+Shift+Control+D resize shrink width 1 px or 1
+bindsym $mod+Shift+Control+W resize grow height 1 px or 1
+bindsym $mod+Shift+Control+S resize shrink height 1 px or 1
+bindsym $mod+Shift+Control+A resize grow width 1 px or 1
+
+# Always float certain windows
+for_window [class="mpv"] floating enable
+for_window [class="Pavucontrol"] floating enable
+
+# Make sure fonts are loaded right
+exec_always xset +fp /home/kai/.fonts/
+exec_always xset fp rehash
+
+# Run startup wallpaper
+exec_always --no-startup-id bash -c "feh --bg-fill ~/.wallpaper/cat.png"
+
+# Allow scripts to interface with dbus
+exec_always --no-startup-id ~/.scripts/Xdbus.sh
+
+# Start notification daemon
+exec_always --no-startup-id dunst
+
+# Enable tap to click - will need to change input
+# device id and property number. See [link] for more
+exec_always --no-startup-id xinput set-prop 12 284 1 > /dev/null 2>&1
+
+# Startup daemons for compositor and status bar
+exec_always --no-startup-id pkill picom; picom --no-use-damage
+exec_always --no-startup-id ~/.config/polybar/launch.sh
+
+# Increase screen contrast (disable for better displays)
+exec_always --no-startup-id xrandr --output eDP --gamma 0.8:0.8:0.8
+
+# Use URxvt settings from Xresources
+exec_always --no-startup-id xrdb ~/.Xresources
+
+exec --no-startup-id pulseaudio --start
